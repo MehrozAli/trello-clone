@@ -60,7 +60,7 @@ export const Header = ({ card }: HeaderProps) => {
 
   return (
     <div className="flex items-start gap-x-3 mb-6 w-full">
-      <PanelsTopLeft className="h-5 w-5 mt-1 text-neutral-700" />
+      <PanelsTopLeft className="h-5 w-5 mt-1 text-foreground" />
 
       <div className="w-full">
         <form action={onSubmit}>
@@ -68,7 +68,7 @@ export const Header = ({ card }: HeaderProps) => {
             defaultValue={title}
             ref={inputRef}
             onBlur={onBlur}
-            className="font-semibold text-xl px-1 text-neutral-700 bg-transparent border-transparent relative -left-1.5 w-[95%] focus-visible:bg-white focus-visible:border-input mb-0.5 truncate"
+            className="font-semibold text-xl px-1 text-foreground bg-transparent border-transparent relative -left-1.5 w-[95%] focus-visible:bg-white focus-visible:border-input mb-0.5 truncate"
             id="title"
           />
         </form>
@@ -84,11 +84,11 @@ export const Header = ({ card }: HeaderProps) => {
 Header.Skeleton = function HeaderSkeleton() {
   return (
     <div className="flex items-start gap-x-3 mb-6">
-      <Skeleton className="h-6 w-6 mt-1 bg-neutral-200" />
+      <Skeleton className="h-6 w-6 mt-1 bg-secondary" />
 
       <div>
-        <Skeleton className="w-24 h-6 mb-1 bg-neutral-200" />
-        <Skeleton className="w-12 h-4 bg-neutral-200" />
+        <Skeleton className="w-24 h-6 mb-1 bg-secondary" />
+        <Skeleton className="w-12 h-4 bg-secondary" />
       </div>
     </div>
   );

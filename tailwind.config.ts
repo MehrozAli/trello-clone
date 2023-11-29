@@ -20,8 +20,10 @@ const config: Config = {
     extend: {
       fontFamily: {
         sans: ["'Public Sans Variable'", "system-ui", "sans-serif"],
+        display: ["'Fraunces Variable'", "Georgia", "serif"],
       },
       colors: {
+        marigold: "hsl(var(--marigold))",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

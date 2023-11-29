@@ -14,12 +14,12 @@ export const ActivityItem = ({ log }: ActivityItemProps) => {
   return (
     <li className="flex items-center gap-x-2">
       <Avatar className="h-8 w-8">
-        <AvatarImage src={log.userImage} />
+        <AvatarImage src={log.userImage} alt="" />
       </Avatar>
 
       <div className="flex flex-col space-y-0.5">
         <p className="text-sm text-muted-foreground">
-          <span className="font-semibold lowercase text-neutral-700">
+          <span className="font-semibold text-foreground">
             {log.userName}
           </span>{" "}
           {generateAuditLog(log)}

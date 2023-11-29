@@ -29,22 +29,23 @@ export const BoardOptions = ({ boardId }: BoardOptionsProps) => {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button className="h-auto w-auto p-2" variant="transparent">
+        <Button className="h-auto w-auto p-2" variant="transparent" aria-label="Board actions">
           <Ellipsis className="h-4 w-4" />
         </Button>
       </PopoverTrigger>
 
       <PopoverContent className="px-0 py-3" side="bottom" align="start">
-        <div className="text-sm font-medium text-center text-neutral-600 pb-4">
+        <div className="text-sm font-medium text-center text-muted-foreground pb-4">
           Board actions
         </div>
 
         <PopoverClose asChild>
           <Button
+            aria-label="Close"
             variant="ghost"
-            className="h-auto w-auto p-2 absolute top-2 right-2 text-neutral-600"
+            className="h-auto w-auto p-2 absolute top-2 right-2 text-muted-foreground"
           >
-            <X className="h-4 w-4" />
+            <X className="h-4 w-4" aria-hidden />
           </Button>
         </PopoverClose>
 

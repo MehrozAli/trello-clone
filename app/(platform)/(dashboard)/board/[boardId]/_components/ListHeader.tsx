@@ -87,12 +87,14 @@ export const ListHeader = ({ list, onAddCard }: ListHeaderProps) => {
           <button type="submit" hidden />
         </form>
       ) : (
-        <div
+        <button
+          type="button"
           onClick={enableEditing}
-          className="w-full text-sm px-2.5 py-1 h-7 font-medium border-transparent"
+          className="w-full truncate rounded-sm text-left text-sm px-2.5 py-1 h-7 font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          aria-label={`Rename list ${title}`}
         >
           {title}
-        </div>
+        </button>
       )}
 
       <ListOptions list={list} onAddCard={onAddCard} />

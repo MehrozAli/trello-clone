@@ -75,10 +75,10 @@ export const Description = ({ card }: DescriptionProps) => {
 
   return (
     <div className="flex items-start gap-x-3 w-full">
-      <AlignLeft className="h-5 w-5 mt-0.5 text-neutral-700" />
+      <AlignLeft className="h-5 w-5 mt-0.5 text-foreground" />
 
       <div className="w-full">
-        <p className="font-semibold text-neutral-700 mb-2">Description</p>
+        <p className="font-semibold text-foreground mb-2">Description</p>
 
         {isEditing ? (
           <form action={onSubmit} ref={formRef} className="space-y-2">
@@ -105,13 +105,15 @@ export const Description = ({ card }: DescriptionProps) => {
             </div>
           </form>
         ) : (
-          <div
+          <button
+            type="button"
             onClick={enableEditing}
-            className="min-h-[78px] bg-neutral-200 text-sm font-medium py-3 px-3.5 rounded-md"
-            role="button"
+            className="block w-full min-h-[78px] whitespace-pre-wrap text-left bg-secondary text-sm py-3 px-3.5 rounded-md hover:bg-secondary/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
-            {card.description || "Add a more detailed description"}
-          </div>
+            {card.description || (
+              <span className="text-muted-foreground">Add a more detailed description</span>
+            )}
+          </button>
         )}
       </div>
     </div>
@@ -121,11 +123,11 @@ export const Description = ({ card }: DescriptionProps) => {
 Description.Skeleton = function DescriptionSkeleton() {
   return (
     <div className="flex items-start gap-x-3 w-full">
-      <Skeleton className="h-6 w-6 bg-neutral-200" />
+      <Skeleton className="h-6 w-6 bg-secondary" />
 
       <div className="w-full">
-        <Skeleton className="bg-neutral-200 w-24 h-6 mb-2" />
-        <Skeleton className="bg-neutral-200 w-full h-[78px]" />
+        <Skeleton className="bg-secondary w-24 h-6 mb-2" />
+        <Skeleton className="bg-secondary w-full h-[78px]" />
       </div>
     </div>
   );

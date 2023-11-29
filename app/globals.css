@@ -9,74 +9,51 @@ body,
 }
 
 @layer base {
+  /* Paper, ink and harbour teal, with marigold for highlights. */
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
+    --background: 42 47% 95%;
+    --foreground: 188 23% 14%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
- 
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
- 
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
- 
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
- 
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
- 
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
- 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+    --card: 43 100% 99%;
+    --card-foreground: 188 23% 14%;
 
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
- 
-    --radius: 0.5rem;
-  }
- 
-  .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
- 
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
- 
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
- 
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
- 
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
- 
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
- 
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
- 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
- 
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
+    --popover: 43 100% 99%;
+    --popover-foreground: 188 23% 14%;
+
+    --primary: 176 74% 21%;
+    --primary-foreground: 42 47% 96%;
+
+    --secondary: 41 36% 89%;
+    --secondary-foreground: 188 23% 14%;
+
+    --muted: 41 36% 90%;
+    --muted-foreground: 183 10% 34%;
+
+    --accent: 43 79% 84%;
+    --accent-foreground: 188 23% 14%;
+
+    --marigold: 40 74% 51%;
+
+    --destructive: 11 51% 45%;
+    --destructive-foreground: 42 47% 96%;
+
+    --border: 40 28% 81%;
+    --input: 40 28% 76%;
+    --ring: 176 74% 26%;
+
+    --radius: 0.6rem;
   }
 }
- 
+
 @layer base {
   * {
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+  }
+  h1,
+  h2 {
+    @apply font-display tracking-tight;
   }
 }

@@ -1,13 +1,13 @@
 "use client";
 
-import Image from "next/image";
 import { toast } from "sonner";
 
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useStripeModal } from "@/hooks/useStripeModal";
 import { Button } from "@/components/ui/button";
 import { useAction } from "@/hooks/useAction";
 import { stripeRedirect } from "@/actions/stripeRedirect";
+import { MAX_FREE_BOARDS } from "@/constants/boards";
 
 export const StripeModal = () => {
   const stripeModal = useStripeModal();
@@ -19,42 +19,22 @@ export const StripeModal = () => {
     onError: (err) => toast.error(err),
   });
 
-  const onClick = () => {
-    execute({});
-  };
-
   return (
     <Dialog open={stripeModal.isOpen} onOpenChange={stripeModal.onClose}>
       <DialogContent className="max-w-md p-0 overflow-hidden">
-        <div className="aspect-video relative flex items-center justify-center">
-          <Image src="/stripe.png" alt="hero" className="object-cover" fill />
-        </div>
+        <div className="h-28 bg-[url('/covers/arcs.svg')] bg-cover bg-center" aria-hidden />
 
-        <div className="text-neutral-700 mx-auto space-y-6 p-6">
-          <h2 className="font-semibold text-xl">
-            Upgrade to Taskify Pro today!
-          </h2>
+        <div className="mx-auto space-y-5 p-6">
+          <DialogTitle className="font-display text-2xl">Upgrade to Taskify Pro</DialogTitle>
 
-          <p className="font-semibold text-xs text-neutral-600">
-            Explore the best of Taskify
+          <p className="text-sm text-muted-foreground">
+            Free workspaces hold {MAX_FREE_BOARDS} boards. Pro lifts that limit for
+            the whole workspace. Billing runs through Stripe Checkout and can be
+            managed or cancelled from the Billing page.
           </p>
 
-          <div className="pl-3">
-            <ul className="text-sm list-disc">
-              <li>Unlimited Boards</li>
-              <li>Advanced Checklist</li>
-              <li>Admin and Security Features</li>
-              <li>And more!</li>
-            </ul>
-          </div>
-
-          <Button
-            disabled={loading}
-            onClick={onClick}
-            variant="primary"
-            className="w-full"
-          >
-            Upgrade
+          <Button disabled={loading} onClick={() => execute({})} variant="primary" className="w-full">
+            Continue to checkout
           </Button>
         </div>
       </DialogContent>

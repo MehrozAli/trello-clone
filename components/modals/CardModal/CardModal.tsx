@@ -3,7 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import type { AuditLog } from "@/lib/generated/prisma/client";
 
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useCardModal } from "@/hooks/useCardModal";
 import { CardWithList } from "@/types";
 import { fetcher } from "@/lib/fetcher";
@@ -33,6 +33,7 @@ export const CardModal = () => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
+        <DialogTitle className="sr-only">{cardData?.title ?? "Card details"}</DialogTitle>
         {!cardData ? <Header.Skeleton /> : <Header card={cardData} />}
 
         <div className="grid grid-cols-1 md:grid-cols-4 md:gap-4">

@@ -8,31 +8,21 @@ import { FormPopover } from "@/components/Form/FormPopover";
 
 export const Navbar = () => {
   return (
-    <nav className="fixed px-4 z-50 top-0 w-full h-14 border-b shadow-sm bg-white flex items-center">
+    <nav className="fixed px-4 z-50 top-0 w-full h-14 border-b bg-card flex items-center">
       <MobileSidebar />
 
       <div className="flex items-center gap-4">
-        <div className="hidden md:flex">
-          <Logo />
-        </div>
+        <Logo />
 
         <FormPopover align="start" sideOffset={18}>
-          <Button
-            size="sm"
-            className="rounded-sm hidden md:block h-auto py-1.5 px-2"
-            variant="primary"
-          >
-            Create
+          <Button size="sm" className="hidden md:inline-flex h-8 px-3" variant="primary">
+            <Plus className="h-4 w-4 mr-1" aria-hidden /> Create
           </Button>
         </FormPopover>
 
         <FormPopover>
-          <Button
-            variant="primary"
-            size="sm"
-            className="rounded-sm md:hidden block"
-          >
-            <Plus className="h-4 w-4" />
+          <Button variant="primary" size="sm" className="md:hidden h-8 w-8 p-0" aria-label="Create board">
+            <Plus className="h-4 w-4" aria-hidden />
           </Button>
         </FormPopover>
       </div>

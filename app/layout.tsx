@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { siteConfig } from "@/config/site";
 
 import "@fontsource-variable/public-sans";
+import "@fontsource-variable/fraunces";
 import "./globals.css";
 
 export const metadata: Metadata = {

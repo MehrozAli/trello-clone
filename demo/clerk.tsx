@@ -26,7 +26,7 @@ export const OrganizationSwitcher = (_props: Record<string, unknown>) => (
     className="flex items-center gap-2 rounded-md px-2 py-1 text-sm font-medium hover:bg-muted"
   >
     <Image src={DEMO_ORG.imageUrl} alt="" width={24} height={24} className="rounded-sm" />
-    {DEMO_ORG.name}
+    <span className="hidden sm:inline">{DEMO_ORG.name}</span>
   </Link>
 );
 
@@ -44,10 +44,11 @@ export const UserButton = (_props: Record<string, unknown>) => {
       type="button"
       onClick={signOut}
       title="Sign out of the demo"
+      aria-label="Sign out of the demo"
       className="flex items-center gap-2 rounded-full pr-2 text-xs text-muted-foreground hover:bg-muted"
     >
       <Image src={DEMO_USER.imageUrl} alt="" width={32} height={32} className="rounded-full" />
-      <span>Demo · sign out</span>
+      <span className="hidden sm:inline">Demo · sign out</span>
     </button>
   );
 };

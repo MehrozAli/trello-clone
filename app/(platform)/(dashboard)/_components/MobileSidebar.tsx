@@ -6,7 +6,7 @@ import { Menu } from "lucide-react";
 
 import { useMobileSidebar } from "@/hooks/useMobileSidebar";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { Sidebar } from "./Sidebar";
 
 export const MobileSidebar = () => {
@@ -23,15 +23,17 @@ export const MobileSidebar = () => {
     <>
       <Button
         onClick={onOpen}
-        className="block md:hidden mr-2"
+        className="md:hidden mr-2"
         variant="ghost"
         size="sm"
+        aria-label="Open navigation"
       >
         <Menu className="h-4 w-4" />
       </Button>
 
       <Sheet open={isOpen} onOpenChange={onClose}>
         <SheetContent side="left" className="p-2 pt-10">
+          <SheetTitle className="sr-only">Workspaces</SheetTitle>
           <Sidebar storageKey="t-sidebar-mobile-state" />
         </SheetContent>
       </Sheet>

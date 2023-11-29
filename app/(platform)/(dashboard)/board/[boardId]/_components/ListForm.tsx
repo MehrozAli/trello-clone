@@ -62,7 +62,7 @@ export const ListForm = () => {
       <ListWrapper>
         <form
           ref={formRef}
-          className="w-full rounded-md p-3 bg-white space-y-4 shadow-md"
+          className="w-full rounded-lg p-3 bg-card space-y-4 shadow-md"
           action={onSubmit}
         >
           <FormInput
@@ -78,7 +78,7 @@ export const ListForm = () => {
           <div className="flex items-center gap-x-1">
             <FormSubmit>Add list</FormSubmit>
 
-            <Button size="sm" variant="ghost" onClick={() => setEditing(false)}>
+            <Button size="sm" variant="ghost" type="button" aria-label="Cancel" onClick={() => setEditing(false)}>
               <X className="h-5 w-5" />
             </Button>
           </div>
@@ -91,7 +91,7 @@ export const ListForm = () => {
     <ListWrapper>
       <Button
         onClick={enableEditing}
-        className="w-full rounded-md bg-white/80 hover:bg-white/50 transition p-3 flex gap-2 items-center font-medium text-ms"
+        className="w-full rounded-lg bg-card/85 text-foreground hover:bg-card transition p-3 flex gap-2 items-center font-medium text-sm"
       >
         <Plus className="h-4 w-4" />
         Add a list

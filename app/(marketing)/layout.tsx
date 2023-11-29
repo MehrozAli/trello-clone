@@ -3,11 +3,11 @@ import { PropsWithChildren } from "react";
 import { Navbar } from "./_components/Navbar";
 import { Footer } from "./_components/Footer";
 
-const MarketingLayout: React.FC<PropsWithChildren> = ({ children }) => {
+const MarketingLayout = ({ children }: PropsWithChildren) => {
   return (
-    <div className="h-full bg-slate-100">
+    <div className="flex min-h-full flex-col">
       <Navbar />
-      <main className="pt-40 pb-20 bg-slate-100">{children}</main>
+      <main className="flex-1">{children}</main>
       <Footer />
     </div>
   );
