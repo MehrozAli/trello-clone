@@ -25,8 +25,9 @@ const idOf = (value: string | { id: string } | null | undefined) =>
 export async function POST(req: Request) {
   const secret = process.env.STRIPE_WEBHOOK_SECRET;
 
-  if (!secret) {
-    return new NextResponse("Webhook secret is not configured", { status: 500 });
+  // Both are needed: the secret to verify, the API key to fetch the subscription.
+  if (!secret || !process.env.STRIPE_API_KEY) {
+    return new NextResponse("Stripe is not configured", { status: 500 });
   }
 
   const signature = req.headers.get("stripe-signature");

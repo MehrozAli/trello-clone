@@ -52,6 +52,7 @@ describe("POST /api/webhook", () => {
     await resetDb();
     retrieve.mockReset().mockResolvedValue(subscription);
     vi.stubEnv("STRIPE_WEBHOOK_SECRET", SECRET);
+    vi.stubEnv("STRIPE_API_KEY", "sk_test_placeholder");
   });
 
   afterEach(() => {
@@ -63,6 +64,15 @@ describe("POST /api/webhook", () => {
 
     expect((await send(checkoutCompleted())).status).toBe(500);
     expect(await db.orgSubscription.count()).toBe(0);
+  });
+
+  it("answers a clear 500, not a crash, when the API key is missing", async () => {
+    vi.stubEnv("STRIPE_API_KEY", "");
+
+    const response = await send(checkoutCompleted());
+
+    expect(response.status).toBe(500);
+    expect(await response.text()).toBe("Stripe is not configured");
   });
 
   it("rejects requests without a signature", async () => {
