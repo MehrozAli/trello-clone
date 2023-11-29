@@ -55,7 +55,7 @@ export const BoardList = async () => {
             <span className="text-xs">
               {isPro
                 ? "Unlimited"
-                : `${MAX_FREE_BOARDS - availableCount} remaining`}
+                : `${Math.max(0, MAX_FREE_BOARDS - availableCount)} remaining`}
             </span>
             <Hint
               description={`Free workspaces can have upto 5 open boards. For unlimited boards, upgrade this workspace`}

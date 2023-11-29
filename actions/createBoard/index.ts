@@ -9,24 +9,15 @@ import { db } from "@/lib/db";
 import { createSafeAction } from "@/lib/createSafeAction";
 import { CreateBoard } from "./schema";
 import { createAuditLog } from "@/lib/createAuditLog";
-import { incrementAvailableCount, hasAvailableCount } from "@/lib/orgLimit";
+import { claimBoardSlot } from "@/lib/orgLimit";
 import { checkSubscription } from "@/lib/subscription";
+import { BOARD_LIMIT_ERROR, MAX_FREE_BOARDS } from "@/constants/boards";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
   const { userId, orgId } = await auth();
 
   if (!userId || !orgId) {
     return { error: "Not authenticated" };
-  }
-
-  const canCreate = await hasAvailableCount();
-  const isPro = await checkSubscription();
-
-  if (!canCreate && !isPro) {
-    return {
-      error:
-        "You have reached your limit of free boards. Please upgrade to create more.",
-    };
   }
 
   const { title, image } = data;
@@ -45,21 +36,31 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     return { error: "Missing fields. Failed to create board." };
   }
 
+  const isPro = await checkSubscription();
+
   try {
-    board = await db.board.create({
-      data: {
-        title,
-        orgId,
-        imageId,
-        imageThumbUrl,
-        imageFullUrl,
-        imageLinkHtml,
-        imageUserName,
-      },
+    board = await db.$transaction(async (tx) => {
+      const claimed = await claimBoardSlot(tx, orgId, isPro ? null : MAX_FREE_BOARDS);
+
+      if (!claimed) {
+        return null;
+      }
+
+      return tx.board.create({
+        data: {
+          title,
+          orgId,
+          imageId,
+          imageThumbUrl,
+          imageFullUrl,
+          imageLinkHtml,
+          imageUserName,
+        },
+      });
     });
 
-    if (!isPro) {
-      await incrementAvailableCount();
+    if (!board) {
+      return { error: BOARD_LIMIT_ERROR };
     }
 
     await createAuditLog({

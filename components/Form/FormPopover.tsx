@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { useAction } from "@/hooks/useAction";
 import { createBoard } from "@/actions/createBoard";
 import { useStripeModal } from "@/hooks/useStripeModal";
+import { BOARD_LIMIT_ERROR } from "@/constants/boards";
 
 import { FormInput } from "./FormInput";
 import { FormSubmit } from "./FormSubmit";
@@ -45,7 +46,10 @@ export const FormPopover = ({
     },
     onError: (error) => {
       toast.error(error);
-      stripeModal.onOpen();
+
+      if (error === BOARD_LIMIT_ERROR) {
+        stripeModal.onOpen();
+      }
     },
   });
 

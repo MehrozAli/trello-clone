@@ -23,3 +23,15 @@ export const createList = (boardId: string, title: string, order: number) =>
 
 export const createCard = (listId: string, title: string, order: number) =>
   db.card.create({ data: { listId, title, order } });
+
+export const COVER =
+  "cover-1|/covers/cover-1.svg|/covers/cover-1.svg|https://unsplash.com/|Taskify";
+
+export const makePro = (orgId: string) =>
+  db.orgSubscription.create({
+    data: {
+      orgId,
+      stripePriceId: "price_test",
+      stripeCurrentPeriodEnd: new Date(Date.now() + 7 * 86_400_000),
+    },
+  });

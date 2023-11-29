@@ -8,8 +8,7 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { createSafeAction } from "@/lib/createSafeAction";
 import { createAuditLog } from "@/lib/createAuditLog";
-import { decrementAvailableCount } from "@/lib/orgLimit";
-import { checkSubscription } from "@/lib/subscription";
+import { releaseBoardSlot } from "@/lib/orgLimit";
 
 import { DeleteBoard } from "./schema";
 import { InputType, ReturnType } from "./types";
@@ -21,21 +20,16 @@ const handler = async (data: InputType): Promise<ReturnType> => {
     return { error: "Unauthorized" };
   }
 
-  const isPro = await checkSubscription();
   const { id } = data;
   let board;
 
   try {
-    board = await db.board.delete({
-      where: {
-        id,
-        orgId,
-      },
-    });
+    board = await db.$transaction(async (tx) => {
+      const deleted = await tx.board.delete({ where: { id, orgId } });
+      await releaseBoardSlot(tx, orgId);
 
-    if (!isPro) {
-      await decrementAvailableCount();
-    }
+      return deleted;
+    });
 
     await createAuditLog({
       entityTitle: board.title,
