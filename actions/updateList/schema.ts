@@ -1,9 +1,9 @@
 import { z } from "zod";
 
+import { entityId, titleField } from "@/lib/schemas";
+
 export const UpdateList = z.object({
-  title: z
-    .string({ error: "Title is required" })
-    .min(3, { message: "Title is too short" }),
-  id: z.string(),
-  boardId: z.string(),
+  title: titleField(2, 60),
+  id: entityId,
+  boardId: entityId,
 });

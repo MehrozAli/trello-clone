@@ -1,9 +1,9 @@
 import { z } from "zod";
 
+import { entityId, titleField } from "@/lib/schemas";
+
 export const CreateCard = z.object({
-  title: z
-    .string({ error: "Title is required" })
-    .min(2, { message: "Title is too short" }),
-  boardId: z.string(),
-  listId: z.string(),
+  title: titleField(2, 120),
+  boardId: entityId,
+  listId: entityId,
 });

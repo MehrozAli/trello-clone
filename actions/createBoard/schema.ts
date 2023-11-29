@@ -1,10 +1,8 @@
 import { z } from "zod";
 
+import { coverImage, titleField } from "@/lib/schemas";
+
 export const CreateBoard = z.object({
-  title: z
-    .string({ error: "Title is required" })
-    .min(3, {
-      message: "Title is too short",
-    }),
-  image: z.string({ error: "Image is required" }),
+  title: titleField(3, 60),
+  image: coverImage,
 });

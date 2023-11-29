@@ -4,7 +4,7 @@ import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { ACTION, ENTITY_TYPE } from "@/lib/generated/prisma/enums";
 
-import { InputType, ReturnType } from "./types";
+import { ParsedInput, ReturnType } from "./types";
 import { db } from "@/lib/db";
 import { createSafeAction } from "@/lib/createSafeAction";
 import { CreateBoard } from "./schema";
@@ -13,7 +13,7 @@ import { claimBoardSlot } from "@/lib/orgLimit";
 import { checkSubscription } from "@/lib/subscription";
 import { BOARD_LIMIT_ERROR, MAX_FREE_BOARDS } from "@/constants/boards";
 
-const handler = async (data: InputType): Promise<ReturnType> => {
+const handler = async (data: ParsedInput): Promise<ReturnType> => {
   const { userId, orgId } = await auth();
 
   if (!userId || !orgId) {
@@ -21,20 +21,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
   }
 
   const { title, image } = data;
-
-  const [imageId, imageThumbUrl, imageFullUrl, imageLinkHtml, imageUserName] =
-    image.split("|");
   let board;
-
-  if (
-    !imageId ||
-    !imageThumbUrl ||
-    !imageFullUrl ||
-    !imageLinkHtml ||
-    !imageUserName
-  ) {
-    return { error: "Missing fields. Failed to create board." };
-  }
 
   const isPro = await checkSubscription();
 
@@ -47,15 +34,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
       }
 
       return tx.board.create({
-        data: {
-          title,
-          orgId,
-          imageId,
-          imageThumbUrl,
-          imageFullUrl,
-          imageLinkHtml,
-          imageUserName,
-        },
+        data: { title, orgId, ...image },
       });
     });
 

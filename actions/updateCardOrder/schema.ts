@@ -1,13 +1,15 @@
 import { z } from "zod";
 
+import { entityId } from "@/lib/schemas";
+
 export const UpdateCardOrder = z.object({
-  boardId: z.string().min(1),
+  boardId: entityId,
   items: z
     .array(
       z.object({
-        id: z.string().min(1),
+        id: entityId,
         order: z.number().int().min(0),
-        listId: z.string().min(1),
+        listId: entityId,
       })
     )
     .min(1)

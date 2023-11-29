@@ -1,6 +1,8 @@
 import { z } from "zod";
 
+import { entityId } from "@/lib/schemas";
+
 export const DeleteCard = z.object({
-  id: z.string(),
-  boardId: z.string(),
+  id: entityId,
+  boardId: entityId,
 });

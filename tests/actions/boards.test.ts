@@ -71,3 +71,21 @@ describe("deleteBoard", () => {
     expect(await db.board.count({ where: { id: foreign.id } })).toBe(1);
   });
 });
+
+describe("createBoard input", () => {
+  beforeEach(async () => {
+    await resetDb();
+    signInAs("user_1", "org_a");
+  });
+
+  it("rejects a cover pointing at an arbitrary host before touching the database", async () => {
+    const result = await createBoard({
+      title: "Roadmap",
+      image: "x|https://evil.example/a.png|https://evil.example/a.png|https://unsplash.com/|Eve",
+    });
+
+    expect(result.fieldErrors?.image).toBeDefined();
+    expect(await db.board.count()).toBe(0);
+    expect(await limitFor("org_a")).toBe(0);
+  });
+});

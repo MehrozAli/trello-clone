@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 
 import { createList } from "@/actions/createList";
+import { updateList } from "@/actions/updateList";
 import { db } from "@/lib/db";
 
 import { signInAs, signOut } from "../mocks/clerk";
@@ -39,5 +40,21 @@ describe("createList", () => {
     expect(await createList({ boardId: board.id, title: "Backlog" })).toEqual({
       error: "Unauthorized",
     });
+  });
+});
+
+describe("updateList", () => {
+  beforeEach(async () => {
+    await resetDb();
+    signInAs("user_1", "org_a");
+  });
+
+  it("accepts the same two-character titles that createList allows", async () => {
+    const board = await createBoard("org_a");
+    const created = await createList({ boardId: board.id, title: "QA" });
+
+    const renamed = await updateList({ id: created.data!.id, boardId: board.id, title: "UX" });
+
+    expect(renamed.data?.title).toBe("UX");
   });
 });

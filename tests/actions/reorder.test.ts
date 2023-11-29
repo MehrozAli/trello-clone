@@ -74,11 +74,12 @@ describe("updateCardOrder", () => {
   });
 
   it("rejects the same card twice in one request", async () => {
+    const [boardId, cardId, listId] = [crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID()];
     const result = await updateCardOrder({
-      boardId: "b",
+      boardId,
       items: [
-        { id: "x", listId: "l", order: 0 },
-        { id: "x", listId: "l", order: 1 },
+        { id: cardId, listId, order: 0 },
+        { id: cardId, listId, order: 1 },
       ],
     });
 
