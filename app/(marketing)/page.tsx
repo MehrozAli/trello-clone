@@ -1,5 +1,4 @@
 import { Medal } from "lucide-react";
-import { Poppins } from "next/font/google";
 import localFont from "next/font/local";
 import Link from "next/link";
 
@@ -8,10 +7,6 @@ import { Button } from "@/components/ui/button";
 
 const headingFont = localFont({
   src: "../../public/fonts/font.woff2",
-});
-const textFont = Poppins({
-  subsets: ["latin"],
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 });
 
 const MarketingPage = () => {
@@ -39,8 +34,7 @@ const MarketingPage = () => {
 
       <div
         className={cn(
-          "text-sm md:text-xl text-neutral-400 mt-4 max-w-xs md:max-w-2xl text-center mx-auto",
-          textFont.className
+          "text-sm md:text-xl text-neutral-400 mt-4 max-w-xs md:max-w-2xl text-center mx-auto"
         )}
       >
         Collaborate, manage projects and reach new productivity peaks. From high

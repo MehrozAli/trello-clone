@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
 import { notFound, redirect } from "next/navigation";
 import { PropsWithChildren } from "react";
 
@@ -6,16 +6,16 @@ import { db } from "@/lib/db";
 import { BoardNavbar } from "./_components/BoardNavbar";
 
 interface BoardPageLayoutProps {
-  params: { boardId: string };
+  params: Promise<{ boardId: string }>;
 }
 
 export async function generateMetadata({
   params,
 }: {
-  params: { boardId: string };
+  params: Promise<{ boardId: string }>;
 }) {
-  const { orgId } = auth();
-  const { boardId } = params;
+  const { orgId } = await auth();
+  const { boardId } = await params;
 
   if (!orgId) {
     return { title: "Board" };
@@ -30,8 +30,8 @@ export default async function BoardPageLayout({
   children,
   params,
 }: PropsWithChildren<BoardPageLayoutProps>) {
-  const { orgId } = auth();
-  const { boardId } = params;
+  const { orgId } = await auth();
+  const { boardId } = await params;
 
   if (!orgId) {
     redirect("/select-org");

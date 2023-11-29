@@ -1,6 +1,6 @@
 "use client";
 
-import { XCircle } from "lucide-react";
+import { CircleX } from "lucide-react";
 
 interface FormErrorsProps {
   id: string;
@@ -23,7 +23,7 @@ export const FormErrors = ({ id, errors }: FormErrorsProps) => {
           key={error}
           className="flex items-center font-medium p-2 border border-rose-500 rounded-sm bg-rose-500/10"
         >
-          <XCircle className="h-4 w-4 mr-2" />
+          <CircleX className="h-4 w-4 mr-2" />
           {error}
         </div>
       ))}

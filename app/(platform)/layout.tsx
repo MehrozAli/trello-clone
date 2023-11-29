@@ -7,7 +7,7 @@ import { QueryProvider } from "@/providers/QueryProvider";
 
 const PlatformLayout = ({ children }: PropsWithChildren) => {
   return (
-    <ClerkProvider>
+    <ClerkProvider afterSignOutUrl="/">
       <QueryProvider>
         <Toaster />
         <ModalProvider />

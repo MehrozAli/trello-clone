@@ -1,6 +1,6 @@
 "use client";
 
-import { forwardRef, useRef, KeyboardEventHandler, ElementRef } from "react";
+import { forwardRef, useRef, KeyboardEventHandler, ElementRef, RefObject } from "react";
 import { useParams } from "next/navigation";
 import { Plus, X } from "lucide-react";
 import { useEventListener, useOnClickOutside } from "usehooks-ts";
@@ -38,7 +38,7 @@ export const CardForm = forwardRef<HTMLTextAreaElement, CardFormProps>(
       }
     };
     useEventListener("keydown", onKeyDown);
-    useOnClickOutside(formRef, disableEditing);
+    useOnClickOutside(formRef as RefObject<HTMLFormElement>, disableEditing);
 
     const onTextareaKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (
       e

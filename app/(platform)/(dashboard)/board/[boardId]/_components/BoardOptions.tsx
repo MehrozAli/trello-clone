@@ -1,6 +1,6 @@
 "use client";
 
-import { MoreHorizontal, X } from "lucide-react";
+import { Ellipsis, X } from "lucide-react";
 import { toast } from "sonner";
 
 import {
@@ -30,7 +30,7 @@ export const BoardOptions = ({ boardId }: BoardOptionsProps) => {
     <Popover>
       <PopoverTrigger asChild>
         <Button className="h-auto w-auto p-2" variant="transparent">
-          <MoreHorizontal className="h-4 w-4" />
+          <Ellipsis className="h-4 w-4" />
         </Button>
       </PopoverTrigger>
 

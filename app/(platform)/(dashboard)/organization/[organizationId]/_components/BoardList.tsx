@@ -1,5 +1,5 @@
-import { HelpCircle, User2 } from "lucide-react";
-import { auth } from "@clerk/nextjs";
+import { CircleHelp, UserRound } from "lucide-react";
+import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 
@@ -12,7 +12,7 @@ import { MAX_FREE_BOARDS } from "@/constants/boards";
 import { checkSubscription } from "@/lib/subscription";
 
 export const BoardList = async () => {
-  const { orgId } = auth();
+  const { orgId } = await auth();
 
   if (!orgId) {
     return redirect("/select-org");
@@ -29,7 +29,7 @@ export const BoardList = async () => {
   return (
     <div className="space-y-4">
       <div className="flex items-center font-semibold text-neutral-700 text-lg">
-        <User2 className="h-6 w-6 mr-2" />
+        <UserRound className="h-6 w-6 mr-2" />
         Your boards
       </div>
 
@@ -61,7 +61,7 @@ export const BoardList = async () => {
               description={`Free workspaces can have upto 5 open boards. For unlimited boards, upgrade this workspace`}
               sideOffset={40}
             >
-              <HelpCircle className="absolute bottom-2 right-2 h-[14px] w-[14px]" />
+              <CircleHelp className="absolute bottom-2 right-2 h-[14px] w-[14px]" />
             </Hint>
           </div>
         </FormPopover>

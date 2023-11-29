@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Check, Loader2 } from "lucide-react";
+import { Check, LoaderCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useFormStatus } from "react-dom";
 
@@ -11,15 +11,22 @@ import { unsplash } from "@/lib/unsplash";
 import { defaultUnsplashImages } from "@/constants/images";
 import { FormErrors } from "./FormErrors";
 
+type CoverImage = {
+  id: string;
+  urls: { thumb: string; full: string };
+  links: { html: string };
+  user: { name: string };
+};
+
 interface FormPickerProps {
   id: string;
   errors?: Record<string, string[] | undefined>;
 }
 
 export const FormPicker = ({ id, errors }: FormPickerProps) => {
-  const [images, setImages] = useState<Array<Record<string, any>>>([]);
+  const [images, setImages] = useState<CoverImage[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedImageId, setSelectedImageId] = useState(null);
+  const [selectedImageId, setSelectedImageId] = useState<string | null>(null);
   const { pending } = useFormStatus();
 
   useEffect(() => {
@@ -31,7 +38,7 @@ export const FormPicker = ({ id, errors }: FormPickerProps) => {
         });
 
         if (result?.response) {
-          const unsplashImages = result.response as Array<Record<string, any>>;
+          const unsplashImages = result.response as CoverImage[];
 
           setImages(unsplashImages);
         } else {
@@ -52,7 +59,7 @@ export const FormPicker = ({ id, errors }: FormPickerProps) => {
   if (loading) {
     return (
       <div className="p-6 flex items-center justify-center">
-        <Loader2 className="h-6 w-6 text-sky-700 animate-spin" />
+        <LoaderCircle className="h-6 w-6 text-sky-700 animate-spin" />
       </div>
     );
   }

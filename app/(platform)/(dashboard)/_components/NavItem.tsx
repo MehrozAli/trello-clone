@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Activity, CreditCard, Layout, Settings } from "lucide-react";
+import { Activity, CreditCard, PanelsTopLeft, Settings } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
 
 import {
@@ -38,7 +38,7 @@ export const NavItem = ({
   const routes = [
     {
       label: "Boards",
-      icon: <Layout className="h-4 w-4 mr-2" />,
+      icon: <PanelsTopLeft className="h-4 w-4 mr-2" />,
       href: `/organization/${organization.id}`,
     },
     {

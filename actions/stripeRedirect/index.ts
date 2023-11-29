@@ -1,18 +1,18 @@
 "use server";
 
-import { auth, currentUser } from "@clerk/nextjs";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 
 import { db } from "@/lib/db";
 import { createSafeAction } from "@/lib/createSafeAction";
 
 import { StripeRedirect } from "./schema";
-import { InputType, ReturnType } from "./types";
+import { ReturnType } from "./types";
 import { absoluteUrl } from "@/lib/utils";
-import { stripe } from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 
-const handler = async (data: InputType): Promise<ReturnType> => {
-  const { userId, orgId } = auth();
+const handler = async (): Promise<ReturnType> => {
+  const { userId, orgId } = await auth();
   const user = await currentUser();
 
   if (!userId || !orgId || !user) {
@@ -23,6 +23,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
   let url = "";
 
   try {
+    const stripe = getStripe();
     const organizationSubscription = await db.orgSubscription.findUnique({
       where: { orgId },
     });
@@ -38,7 +39,6 @@ const handler = async (data: InputType): Promise<ReturnType> => {
       const stripeSession = await stripe.checkout.sessions.create({
         success_url: settingsUrl,
         cancel_url: settingsUrl,
-        payment_method_types: ["card"],
         mode: "subscription",
         billing_address_collection: "auto",
         customer_email: user.emailAddresses[0].emailAddress,
@@ -61,7 +61,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
 
       url = stripeSession.url || "";
     }
-  } catch (error) {
+  } catch {
     return { error: "Something went wrong!" };
   }
 

@@ -1,16 +1,16 @@
-import { auth } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
 import { db } from "@/lib/db";
 import { ListContainer } from "./_components/ListContainer";
 
 interface Props {
-  params: { boardId: string };
+  params: Promise<{ boardId: string }>;
 }
 
 export default async function BoardPage({ params }: Props) {
-  const { boardId } = params;
-  const { orgId } = auth();
+  const { boardId } = await params;
+  const { orgId } = await auth();
 
   if (!orgId) {
     redirect("/select-org");

@@ -3,11 +3,16 @@ import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 
 import { db } from "@/lib/db";
-import { stripe } from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
+
+// Since Stripe API 2025-03-31 the billing period lives on subscription items.
+const periodEnd = (subscription: Stripe.Subscription) =>
+  new Date(subscription.items.data[0].current_period_end * 1000);
 
 export async function POST(req: Request) {
   const body = await req.text();
-  const signature = headers().get("Stripe-Signature") as string;
+  const signature = (await headers()).get("Stripe-Signature") as string;
+  const stripe = getStripe();
 
   let event: Stripe.Event;
 
@@ -17,13 +22,12 @@ export async function POST(req: Request) {
       signature,
       process.env.STRIPE_WEBHOOK_SECRET!
     );
-  } catch (error) {
+  } catch {
     return new NextResponse("Webhook error", { status: 400 });
   }
 
-  const session = event.data.object as Stripe.Checkout.Session;
-
   if (event.type === "checkout.session.completed") {
+    const session = event.data.object;
     const subscription = await stripe.subscriptions.retrieve(
       session.subscription as string
     );
@@ -38,25 +42,22 @@ export async function POST(req: Request) {
         stripeSubscriptionId: subscription.id,
         stripeCustomerId: subscription.customer as string,
         stripePriceId: subscription.items.data[0].price.id,
-        stripeCurrentPeriodEnd: new Date(
-          subscription.current_period_end * 1000
-        ),
+        stripeCurrentPeriodEnd: periodEnd(subscription),
       },
     });
   }
 
   if (event.type === "invoice.payment_succeeded") {
+    const invoice = event.data.object;
     const subscription = await stripe.subscriptions.retrieve(
-      session.subscription as string
+      invoice.parent?.subscription_details?.subscription as string
     );
 
     await db.orgSubscription.update({
       where: { stripeSubscriptionId: subscription.id },
       data: {
         stripePriceId: subscription.items.data[0].price.id,
-        stripeCurrentPeriodEnd: new Date(
-          subscription.current_period_end * 1000
-        ),
+        stripeCurrentPeriodEnd: periodEnd(subscription),
       },
     });
   }

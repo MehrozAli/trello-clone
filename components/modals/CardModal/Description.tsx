@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useState, useRef, ElementRef } from "react";
+import { useState, useRef, ElementRef, RefObject } from "react";
 import { AlignLeft } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEventListener, useOnClickOutside } from "usehooks-ts";
@@ -71,7 +71,7 @@ export const Description = ({ card }: DescriptionProps) => {
   };
 
   useEventListener("keydown", onKeyDown);
-  useOnClickOutside(formRef, disableEditing);
+  useOnClickOutside(formRef as RefObject<HTMLFormElement>, disableEditing);
 
   return (
     <div className="flex items-start gap-x-3 w-full">

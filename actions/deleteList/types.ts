@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { List } from "@prisma/client";
+import type { List } from "@/lib/generated/prisma/client";
 
 import { ActionState } from "@/lib/createSafeAction";
 import { DeleteList } from "./schema";

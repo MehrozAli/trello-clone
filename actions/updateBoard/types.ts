@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Board } from "@prisma/client";
+import type { Board } from "@/lib/generated/prisma/client";
 
 import { ActionState } from "@/lib/createSafeAction";
 import { UpdateBoard } from "./schema";

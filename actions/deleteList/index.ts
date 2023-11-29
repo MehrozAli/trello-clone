@@ -1,8 +1,8 @@
 "use server";
 
-import { auth } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
-import { ACTION, ENTITY_TYPE } from "@prisma/client";
+import { ACTION, ENTITY_TYPE } from "@/lib/generated/prisma/enums";
 
 import { db } from "@/lib/db";
 import { createSafeAction } from "@/lib/createSafeAction";
@@ -12,7 +12,7 @@ import { InputType, ReturnType } from "./types";
 import { createAuditLog } from "@/lib/createAuditLog";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
-  const { userId, orgId } = auth();
+  const { userId, orgId } = await auth();
 
   if (!userId || !orgId) {
     return { error: "Unauthorized" };
@@ -36,7 +36,7 @@ const handler = async (data: InputType): Promise<ReturnType> => {
       entityType: ENTITY_TYPE.LIST,
       action: ACTION.DELETE,
     });
-  } catch (error) {
+  } catch {
     return { error: "Failed to delete" };
   }
 

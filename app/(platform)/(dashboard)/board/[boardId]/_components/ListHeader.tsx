@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, ElementRef } from "react";
-import { List } from "@prisma/client";
+import type { List } from "@/lib/generated/prisma/client";
 import { useEventListener } from "usehooks-ts";
 import { toast } from "sonner";
 

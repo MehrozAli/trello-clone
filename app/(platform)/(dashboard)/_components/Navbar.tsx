@@ -1,4 +1,4 @@
-import { PlusIcon } from "lucide-react";
+import { Plus } from "lucide-react";
 import { OrganizationSwitcher, UserButton } from "@clerk/nextjs";
 
 import { Logo } from "@/components/Logo";
@@ -32,7 +32,7 @@ export const Navbar = () => {
             size="sm"
             className="rounded-sm md:hidden block"
           >
-            <PlusIcon className="h-4 w-4" />
+            <Plus className="h-4 w-4" />
           </Button>
         </FormPopover>
       </div>
@@ -54,7 +54,7 @@ export const Navbar = () => {
           }}
         />
 
-        <UserButton afterSignOutUrl="/" />
+        <UserButton />
       </div>
     </nav>
   );

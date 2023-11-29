@@ -1,6 +1,6 @@
 "use client";
 
-import { Card } from "@prisma/client";
+import type { Card } from "@/lib/generated/prisma/client";
 import { Draggable } from "@hello-pangea/dnd";
 
 import { useCardModal } from "@/hooks/useCardModal";

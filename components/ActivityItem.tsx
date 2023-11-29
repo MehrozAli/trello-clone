@@ -1,6 +1,6 @@
 "use client";
 
-import { AuditLog } from "@prisma/client";
+import type { AuditLog } from "@/lib/generated/prisma/client";
 import { format } from "date-fns";
 
 import { generateAuditLog } from "@/lib/generateLogMessage";

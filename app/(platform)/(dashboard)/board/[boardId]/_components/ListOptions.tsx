@@ -1,7 +1,7 @@
 "use client";
 
-import { List } from "@prisma/client";
-import { MoreHorizontal, X } from "lucide-react";
+import type { List } from "@/lib/generated/prisma/client";
+import { Ellipsis, X } from "lucide-react";
 import { toast } from "sonner";
 import { ElementRef, useRef } from "react";
 
@@ -62,7 +62,7 @@ export const ListOptions = ({ list, onAddCard }: ListOptionsProps) => {
     <Popover>
       <PopoverTrigger asChild>
         <Button className="h-auto w-auto p-2" variant="ghost">
-          <MoreHorizontal className="h-4 w-4" />
+          <Ellipsis className="h-4 w-4" />
         </Button>
       </PopoverTrigger>
 

@@ -1,13 +1,19 @@
 import { PropsWithChildren } from "react";
-import { auth } from "@clerk/nextjs";
-import { startCase } from "lodash";
+import { auth } from "@clerk/nextjs/server";
 
 import { OrgControl } from "./_components/OrgControl";
 
-export async function generateMetadata() {
-  const { orgSlug } = auth();
+const toTitle = (slug: string) =>
+  slug
+    .split(/[-_\s]+/)
+    .filter(Boolean)
+    .map((word) => word[0].toUpperCase() + word.slice(1))
+    .join(" ");
 
-  return { title: startCase(orgSlug || "organisation") };
+export async function generateMetadata() {
+  const { orgSlug } = await auth();
+
+  return { title: toTitle(orgSlug || "organisation") };
 }
 
 const OrganizationLayout = ({ children }: PropsWithChildren) => {

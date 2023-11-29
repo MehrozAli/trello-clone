@@ -15,7 +15,7 @@ interface Props {
 }
 
 export const Sidebar = ({ storageKey = "t-sidebar-state" }: Props) => {
-  const [expanded, setExpanded] = useLocalStorage<Record<string, any>>(
+  const [expanded, setExpanded] = useLocalStorage<Record<string, boolean>>(
     storageKey,
     {}
   );

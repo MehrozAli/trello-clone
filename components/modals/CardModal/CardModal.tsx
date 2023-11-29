@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { AuditLog } from "@prisma/client";
+import type { AuditLog } from "@/lib/generated/prisma/client";
 
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useCardModal } from "@/hooks/useCardModal";

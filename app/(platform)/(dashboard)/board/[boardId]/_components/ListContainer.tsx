@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { DragDropContext, Droppable } from "@hello-pangea/dnd";
+import { useState } from "react";
+import { DragDropContext, Droppable, type DropResult } from "@hello-pangea/dnd";
 
 import { ListWithCards } from "@/types";
 import { updateListOrder } from "@/actions/updateListOrder";
@@ -27,6 +27,13 @@ function reorder<T>(list: T[], startIndex: number, endIndex: number) {
 
 export const ListContainer = ({ boardId, lists }: ListContainerProps) => {
   const [orderedData, setOrderedData] = useState(lists);
+  const [serverLists, setServerLists] = useState(lists);
+
+  // Take fresh server data after revalidation without an effect round-trip.
+  if (lists !== serverLists) {
+    setServerLists(lists);
+    setOrderedData(lists);
+  }
 
   const { execute: executeUpdateListOrder } = useAction(updateListOrder, {
     onSuccess: () => toast.success("List reordered"),
@@ -38,7 +45,7 @@ export const ListContainer = ({ boardId, lists }: ListContainerProps) => {
     onError: (err) => toast.error(err),
   });
 
-  const onDragEnd = (result: any) => {
+  const onDragEnd = (result: DropResult) => {
     const { destination, source, type } = result;
 
     if (!destination) {
@@ -65,7 +72,7 @@ export const ListContainer = ({ boardId, lists }: ListContainerProps) => {
 
     // If a card is moved
     if (type === "card") {
-      let newOrderedData = [...orderedData];
+      const newOrderedData = [...orderedData];
 
       // source & destination list
       const sourceList = newOrderedData.find(
@@ -128,10 +135,6 @@ export const ListContainer = ({ boardId, lists }: ListContainerProps) => {
       }
     }
   };
-
-  useEffect(() => {
-    setOrderedData(lists);
-  }, [lists]);
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>

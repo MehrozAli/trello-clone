@@ -52,3 +52,6 @@ tmp/
 # test and screenshot output
 /test-results/
 /playwright-report/
+
+# prisma client (generated on install)
+/lib/generated/
