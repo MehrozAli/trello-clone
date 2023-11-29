@@ -20,16 +20,31 @@ const handler = async (data: InputType): Promise<ReturnType> => {
   let lists;
 
   try {
-    const transaction = items.map((list) =>
-      db.list.update({
-        where: { id: list.id, board: { orgId } },
-        data: { order: list.order },
-      })
-    );
+    lists = await db.$transaction(async (tx) => {
+      const owned = await tx.list.count({
+        where: {
+          id: { in: items.map((item) => item.id) },
+          boardId,
+          board: { orgId },
+        },
+      });
 
-    lists = await db.$transaction(transaction);
+      if (owned !== items.length) {
+        return null;
+      }
+
+      return Promise.all(
+        items.map((item) =>
+          tx.list.update({ where: { id: item.id }, data: { order: item.order } })
+        )
+      );
+    });
   } catch {
     return { error: "Failed to re-order" };
+  }
+
+  if (!lists) {
+    return { error: "Lists not found on this board" };
   }
 
   revalidatePath(`/board/${boardId}`);
