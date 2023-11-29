@@ -5,6 +5,8 @@ const demoAuth = process.env.TASKIFY_DEMO_AUTH === "1";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Self-contained server bundle for the Docker image.
+  output: "standalone",
   images: {
     remotePatterns: [
       {

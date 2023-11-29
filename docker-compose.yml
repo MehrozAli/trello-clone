@@ -1,0 +1,54 @@
+# docker compose up --build  ->  http://localhost:3000
+# Defaults to the demo build (no Clerk account needed). For real auth set
+# TASKIFY_DEMO_AUTH=0 and the Clerk keys in .env (see .env.example).
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: taskify
+      POSTGRES_PASSWORD: taskify
+      POSTGRES_DB: taskify
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U taskify -d taskify"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  migrate:
+    build:
+      context: .
+      target: deps
+    environment:
+      DATABASE_URL: postgresql://taskify:taskify@db:5432/taskify
+      TASKIFY_DEMO_AUTH: ${TASKIFY_DEMO_AUTH:-1}
+    # Seeds the fictional demo workspace only for demo builds.
+    command: >
+      sh -c "npx prisma migrate deploy &&
+             if [ \"$$TASKIFY_DEMO_AUTH\" = 1 ]; then npm run db:seed; fi"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  app:
+    build:
+      context: .
+      args:
+        TASKIFY_DEMO_AUTH: ${TASKIFY_DEMO_AUTH:-1}
+        NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:-}
+        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+    environment:
+      DATABASE_URL: postgresql://taskify:taskify@db:5432/taskify
+      CLERK_SECRET_KEY: ${CLERK_SECRET_KEY:-}
+      STRIPE_API_KEY: ${STRIPE_API_KEY:-}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
+      UNSPLASH_ACCESS_KEY: ${UNSPLASH_ACCESS_KEY:-}
+    ports:
+      - "3000:3000"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+volumes:
+  db-data:
