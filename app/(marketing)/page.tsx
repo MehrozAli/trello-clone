@@ -58,12 +58,12 @@ const MarketingPage = () => {
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Button size="lg" variant="primary" asChild>
-              <Link href="/sign-up">
+              <Link href="/sign-up" prefetch={false}>
                 Start a workspace <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
               </Link>
             </Button>
             <Button size="lg" variant="outline" asChild>
-              <Link href="/sign-in">Sign in</Link>
+              <Link href="/sign-in" prefetch={false}>Sign in</Link>
             </Button>
           </div>
         </div>

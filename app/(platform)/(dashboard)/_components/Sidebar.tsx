@@ -74,7 +74,7 @@ export const Sidebar = ({ storageKey = "t-sidebar-state" }: Props) => {
           className="ml-auto"
           asChild
         >
-          <Link href="/select-org" aria-label="Add a workspace">
+          <Link href="/select-org" prefetch={false} aria-label="Add a workspace">
             <Plus className="h-4 w-4" aria-hidden />
           </Link>
         </Button>

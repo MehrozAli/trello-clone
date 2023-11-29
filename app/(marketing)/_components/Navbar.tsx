@@ -11,11 +11,11 @@ export const Navbar = () => {
 
         <nav className="flex items-center gap-2" aria-label="Account">
           <Button size="sm" variant="ghost" asChild>
-            <Link href="/sign-in">Sign in</Link>
+            <Link href="/sign-in" prefetch={false}>Sign in</Link>
           </Button>
 
           <Button size="sm" variant="primary" asChild>
-            <Link href="/sign-up">Start free</Link>
+            <Link href="/sign-up" prefetch={false}>Start free</Link>
           </Button>
         </nav>
       </div>
