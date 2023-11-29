@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { PropsWithChildren } from "react";
 
 import { db } from "@/lib/db";
+import { isUnsplashCredit } from "@/lib/covers";
 import { BoardNavbar } from "./_components/BoardNavbar";
 
 interface BoardPageLayoutProps {
@@ -51,6 +52,17 @@ export default async function BoardPageLayout({
       <BoardNavbar board={board} />
       <div className="absolute inset-0 bg-black/10" />
       <main className="relative pt-28 h-full">{children}</main>
+
+      {isUnsplashCredit(board.imageLinkHtml) ? (
+        <a
+          href={`${board.imageLinkHtml}?utm_source=taskify&utm_medium=referral`}
+          target="_blank"
+          rel="noreferrer"
+          className="absolute bottom-2 right-3 text-xs text-white/80 hover:text-white underline-offset-2 hover:underline"
+        >
+          Photo by {board.imageUserName} on Unsplash
+        </a>
+      ) : null}
     </div>
   );
 }

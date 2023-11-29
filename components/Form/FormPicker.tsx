@@ -1,119 +1,107 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { Check, LoaderCircle } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useFormStatus } from "react-dom";
+import { useQuery } from "@tanstack/react-query";
 
 import { cn } from "@/lib/utils";
-import { unsplash } from "@/lib/unsplash";
-import { defaultUnsplashImages } from "@/constants/images";
+import { coverFormValue, isUnsplashCredit, LOCAL_COVERS, type Cover } from "@/lib/covers";
 import { FormErrors } from "./FormErrors";
-
-type CoverImage = {
-  id: string;
-  urls: { thumb: string; full: string };
-  links: { html: string };
-  user: { name: string };
-};
 
 interface FormPickerProps {
   id: string;
   errors?: Record<string, string[] | undefined>;
 }
 
+const fetchCovers = async (): Promise<Cover[]> => {
+  const response = await fetch("/api/covers");
+
+  if (!response.ok) {
+    throw new Error("Could not load covers");
+  }
+
+  return response.json();
+};
+
 export const FormPicker = ({ id, errors }: FormPickerProps) => {
-  const [images, setImages] = useState<CoverImage[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedImageId, setSelectedImageId] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const { pending } = useFormStatus();
+  const { data: covers, isPending, isError } = useQuery({
+    queryKey: ["covers"],
+    queryFn: fetchCovers,
+    staleTime: 5 * 60_000,
+  });
 
-  useEffect(() => {
-    const fetchImages = async () => {
-      try {
-        const result = await unsplash.photos.getRandom({
-          collectionIds: ["317099"],
-          count: 9,
-        });
-
-        if (result?.response) {
-          const unsplashImages = result.response as CoverImage[];
-
-          setImages(unsplashImages);
-        } else {
-          console.error("Failed to fetch images from unsplash");
-        }
-      } catch (error) {
-        console.log(error);
-
-        setImages(defaultUnsplashImages);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchImages();
-  }, []);
-
-  if (loading) {
+  if (isPending) {
     return (
-      <div className="p-6 flex items-center justify-center">
-        <LoaderCircle className="h-6 w-6 text-sky-700 animate-spin" />
+      <div className="p-6 flex items-center justify-center" role="status">
+        <LoaderCircle className="h-6 w-6 text-primary animate-spin" aria-hidden />
+        <span className="sr-only">Loading covers</span>
       </div>
     );
   }
 
+  const options = isError || !covers?.length ? LOCAL_COVERS : covers;
+
   return (
-    <div className="relative">
+    <fieldset className="relative" aria-describedby={`${id}-error`}>
+      <legend className="text-xs font-semibold text-muted-foreground mb-2">
+        Cover
+      </legend>
+
       <div className="grid grid-cols-3 gap-2 mb-2">
-        {images.map((img) => (
-          <div
-            key={img.id}
-            onClick={() => {
-              if (pending) return;
+        {options.map((cover) => {
+          const checked = selectedId === cover.id;
 
-              setSelectedImageId(img.id);
-            }}
-            className={cn(
-              "cursor-pointer relative aspect-video group hover:opacity-75 transition bg-muted",
-              { "opacity-50 hover:opacity-50 cursor-auto": pending }
-            )}
-          >
-            <input
-              type="radio"
-              name={id}
-              id={id}
-              className="hidden"
-              checked={selectedImageId === img.id}
-              disabled={pending}
-              value={`${img.id}|${img.urls.thumb}|${img.urls.full}|${img.links.html}|${img.user.name}`}
-            />
-
-            <Image
-              alt="unsplash image"
-              src={img.urls.thumb}
-              className="rounded-sm object-cover"
-              fill
-            />
-
-            {selectedImageId === img.id ? (
-              <div className="absolute inset-y-0 h-full w-full bg-black/30 flex items-center justify-center">
-                <Check className="h-4 w-4 text-white" />
-              </div>
-            ) : null}
-
-            <Link
-              href={img.links.html}
-              target="_blank"
-              className="opacity-0 group-hover:opacity-100 absolute bottom-0 w-full text-[10px] truncate text-white hover:underline p-1 bg-black/50"
+          return (
+            <label
+              key={cover.id}
+              className={cn(
+                "cursor-pointer relative aspect-video rounded-sm overflow-hidden bg-muted transition",
+                "has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring has-[:focus-visible]:ring-offset-2",
+                checked ? "ring-2 ring-primary" : "hover:opacity-80",
+                { "opacity-50 cursor-not-allowed": pending }
+              )}
             >
-              {img.user.name}
-            </Link>
-          </div>
-        ))}
+              <input
+                type="radio"
+                name={id}
+                className="sr-only"
+                checked={checked}
+                disabled={pending}
+                onChange={() => setSelectedId(cover.id)}
+                value={coverFormValue(cover)}
+                aria-label={cover.alt}
+              />
+
+              <Image
+                alt=""
+                src={cover.thumbUrl}
+                className="object-cover"
+                unoptimized={cover.thumbUrl.endsWith(".svg")}
+                sizes="96px"
+                fill
+              />
+
+              {checked ? (
+                <span className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                  <Check className="h-4 w-4 text-white" aria-hidden />
+                </span>
+              ) : null}
+
+              {isUnsplashCredit(cover.linkHtml) ? (
+                <span className="absolute bottom-0 w-full text-[10px] truncate text-white p-1 bg-black/50">
+                  {cover.userName}
+                </span>
+              ) : null}
+            </label>
+          );
+        })}
       </div>
+
       <FormErrors id={id} errors={errors} />
-    </div>
+    </fieldset>
   );
 };
