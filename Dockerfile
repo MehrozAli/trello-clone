@@ -12,6 +12,11 @@ COPY --chown=node:node prisma ./prisma
 # postinstall runs `prisma generate`
 RUN npm ci --no-audit --no-fund
 
+# docker compose --profile test run --rm test
+FROM deps AS test
+COPY --chown=node:node . .
+CMD ["sh", "-c", "npx prisma migrate reset --force && npm test"]
+
 FROM deps AS build
 COPY --chown=node:node . .
 # 1 = demo build: Clerk is replaced by the local stand-ins in demo/.

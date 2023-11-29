@@ -50,5 +50,18 @@ services:
       migrate:
         condition: service_completed_successfully
 
+  # docker compose --profile test run --rm test
+  test:
+    profiles: ["test"]
+    build:
+      context: .
+      target: test
+    environment:
+      # A separate database; migrate reset recreates it on every run.
+      DATABASE_URL: postgresql://taskify:taskify@db:5432/taskify_test
+    depends_on:
+      db:
+        condition: service_healthy
+
 volumes:
   db-data:
