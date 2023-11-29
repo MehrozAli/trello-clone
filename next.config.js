@@ -1,3 +1,8 @@
+// TASKIFY_DEMO_AUTH=1 swaps Clerk for the local stand-ins in demo/ at build
+// time, so the app can run (and be screenshotted) without a Clerk account.
+// Never deploy a demo build: everyone who clicks "Enter" shares one user.
+const demoAuth = process.env.TASKIFY_DEMO_AUTH === "1";
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
@@ -12,6 +17,14 @@ const nextConfig = {
       },
     ],
   },
+  ...(demoAuth && {
+    turbopack: {
+      resolveAlias: {
+        "@clerk/nextjs/server": "./demo/clerk-server.ts",
+        "@clerk/nextjs": "./demo/clerk.tsx",
+      },
+    },
+  }),
 };
 
 module.exports = nextConfig;
