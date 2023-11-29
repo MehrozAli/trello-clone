@@ -10,6 +10,15 @@ interface CreateAuditLogProps {
   action: ACTION;
 }
 
+type ClerkUser = NonNullable<Awaited<ReturnType<typeof currentUser>>>;
+
+// Users without a first or last name were logged as "null null".
+export const displayName = (user: ClerkUser) =>
+  [user.firstName, user.lastName].filter(Boolean).join(" ") ||
+  user.username ||
+  user.primaryEmailAddress?.emailAddress ||
+  "Someone";
+
 export const createAuditLog = async (props: CreateAuditLogProps) => {
   try {
     const { orgId } = await auth();
@@ -29,8 +38,8 @@ export const createAuditLog = async (props: CreateAuditLogProps) => {
         entityTitle,
         action,
         userId: user.id,
-        userImage: user?.imageUrl,
-        userName: `${user.firstName} ${user.lastName}`,
+        userImage: user.imageUrl,
+        userName: displayName(user),
       },
     });
   } catch (error) {

@@ -1,1 +1,9 @@
-export const fetcher = (url: string) => fetch(url).then((res) => res.json());
+export const fetcher = async (url: string) => {
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error(`${response.status} ${response.statusText}`);
+  }
+
+  return response.json();
+};
