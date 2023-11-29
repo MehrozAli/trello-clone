@@ -1,65 +1,91 @@
 import Stripe from "stripe";
-import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 
 import { db } from "@/lib/db";
 import { getStripe } from "@/lib/stripe";
 
 // Since Stripe API 2025-03-31 the billing period lives on subscription items.
-const periodEnd = (subscription: Stripe.Subscription) =>
-  new Date(subscription.items.data[0].current_period_end * 1000);
+const subscriptionFields = (subscription: Stripe.Subscription) => {
+  const item = subscription.items.data[0];
+
+  return {
+    stripeSubscriptionId: subscription.id,
+    stripeCustomerId:
+      typeof subscription.customer === "string"
+        ? subscription.customer
+        : subscription.customer.id,
+    stripePriceId: item.price.id,
+    stripeCurrentPeriodEnd: new Date(item.current_period_end * 1000),
+  };
+};
+
+const idOf = (value: string | { id: string } | null | undefined) =>
+  typeof value === "string" ? value : value?.id;
 
 export async function POST(req: Request) {
-  const body = await req.text();
-  const signature = (await headers()).get("Stripe-Signature") as string;
-  const stripe = getStripe();
+  const secret = process.env.STRIPE_WEBHOOK_SECRET;
 
+  if (!secret) {
+    return new NextResponse("Webhook secret is not configured", { status: 500 });
+  }
+
+  const signature = req.headers.get("stripe-signature");
+
+  if (!signature) {
+    return new NextResponse("Missing Stripe-Signature header", { status: 400 });
+  }
+
+  const stripe = getStripe();
+  const body = await req.text();
   let event: Stripe.Event;
 
   try {
-    event = stripe.webhooks.constructEvent(
-      body,
-      signature,
-      process.env.STRIPE_WEBHOOK_SECRET!
-    );
+    // Verifies the HMAC over the raw body and rejects stale timestamps.
+    event = stripe.webhooks.constructEvent(body, signature, secret);
   } catch {
-    return new NextResponse("Webhook error", { status: 400 });
+    return new NextResponse("Invalid signature", { status: 400 });
   }
 
   if (event.type === "checkout.session.completed") {
     const session = event.data.object;
-    const subscription = await stripe.subscriptions.retrieve(
-      session.subscription as string
-    );
+    const orgId = session.metadata?.orgId;
+    const subscriptionId = idOf(session.subscription);
 
-    if (!session?.metadata?.orgId) {
-      return new NextResponse("Org ID is required", { status: 400 });
+    if (!orgId || !subscriptionId) {
+      return new NextResponse("Org ID and subscription are required", {
+        status: 400,
+      });
     }
 
-    await db.orgSubscription.create({
-      data: {
-        orgId: session.metadata.orgId,
-        stripeSubscriptionId: subscription.id,
-        stripeCustomerId: subscription.customer as string,
-        stripePriceId: subscription.items.data[0].price.id,
-        stripeCurrentPeriodEnd: periodEnd(subscription),
-      },
+    const fields = subscriptionFields(
+      await stripe.subscriptions.retrieve(subscriptionId)
+    );
+
+    // Upsert: an org that cancelled and subscribes again already has a row.
+    await db.orgSubscription.upsert({
+      where: { orgId },
+      create: { orgId, ...fields },
+      update: fields,
     });
   }
 
   if (event.type === "invoice.payment_succeeded") {
-    const invoice = event.data.object;
-    const subscription = await stripe.subscriptions.retrieve(
-      invoice.parent?.subscription_details?.subscription as string
+    const subscriptionId = idOf(
+      event.data.object.parent?.subscription_details?.subscription
     );
 
-    await db.orgSubscription.update({
-      where: { stripeSubscriptionId: subscription.id },
-      data: {
-        stripePriceId: subscription.items.data[0].price.id,
-        stripeCurrentPeriodEnd: periodEnd(subscription),
-      },
-    });
+    if (subscriptionId) {
+      const { stripePriceId, stripeCurrentPeriodEnd } = subscriptionFields(
+        await stripe.subscriptions.retrieve(subscriptionId)
+      );
+
+      // Stripe does not order events; if checkout has not landed yet it
+      // will write the same period, so a missing row is not an error.
+      await db.orgSubscription.updateMany({
+        where: { stripeSubscriptionId: subscriptionId },
+        data: { stripePriceId, stripeCurrentPeriodEnd },
+      });
+    }
   }
 
   return new NextResponse(null, { status: 200 });
