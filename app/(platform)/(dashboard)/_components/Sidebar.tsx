@@ -8,7 +8,6 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Accordion } from "@/components/ui/accordion";
-import { Separator } from "@/components/ui/separator";
 import { NavItem } from "./NavItem";
 
 interface Props {
