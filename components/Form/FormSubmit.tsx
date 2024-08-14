@@ -23,7 +23,7 @@ export const FormSubmit = ({
   children,
   disabled,
   className,
-  variant,
+  variant = "primary",
 }: PropsWithChildren<FormSubmitProps>) => {
   const { pending } = useFormStatus();
 
