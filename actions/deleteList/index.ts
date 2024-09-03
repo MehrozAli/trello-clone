@@ -2,12 +2,14 @@
 
 import { auth } from "@clerk/nextjs";
 import { revalidatePath } from "next/cache";
+import { ACTION, ENTITY_TYPE } from "@prisma/client";
 
 import { db } from "@/lib/db";
 import { createSafeAction } from "@/lib/createSafeAction";
 
 import { DeleteList } from "./schema";
 import { InputType, ReturnType } from "./types";
+import { createAuditLog } from "@/lib/createAuditLog";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
   const { userId, orgId } = auth();
@@ -26,6 +28,13 @@ const handler = async (data: InputType): Promise<ReturnType> => {
         boardId,
         board: { orgId },
       },
+    });
+
+    await createAuditLog({
+      entityTitle: list.title,
+      entityId: list.id,
+      entityType: ENTITY_TYPE.LIST,
+      action: ACTION.DELETE,
     });
   } catch (error) {
     return { error: "Failed to delete" };
