@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useAction } from "@/hooks/useAction";
 import { createBoard } from "@/actions/createBoard";
+import { useStripeModal } from "@/hooks/useStripeModal";
 
 import { FormInput } from "./FormInput";
 import { FormSubmit } from "./FormSubmit";
@@ -33,6 +34,7 @@ export const FormPopover = ({
 }: PropsWithChildren<FormPopoverProps>) => {
   const router = useRouter();
   const closeRef = useRef<ElementRef<"button">>(null);
+  const stripeModal = useStripeModal();
 
   const { execute, fieldErrors } = useAction(createBoard, {
     onSuccess: (data) => {
@@ -41,7 +43,10 @@ export const FormPopover = ({
 
       router.push(`/board/${data.id}`);
     },
-    onError: (error) => toast.error(error),
+    onError: (error) => {
+      toast.error(error);
+      stripeModal.onOpen();
+    },
   });
 
   const onSubmit = (formData: FormData) => {

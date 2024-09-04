@@ -4,7 +4,7 @@ import { AuditLog } from "@prisma/client";
 import { ActivityIcon } from "lucide-react";
 
 import { Skeleton } from "@/components/ui/skeleton";
-import { ActivityItem } from "../ActivityItem";
+import { ActivityItem } from "@/components/ActivityItem";
 
 interface ActivityProps {
   items: AuditLog[];
