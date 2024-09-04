@@ -9,12 +9,22 @@ import { db } from "@/lib/db";
 import { createSafeAction } from "@/lib/createSafeAction";
 import { CreateBoard } from "./schema";
 import { createAuditLog } from "@/lib/createAuditLog";
+import { incrementAvailableCount, hasAvailableCount } from "@/lib/orgLimit";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
   const { userId, orgId } = auth();
 
   if (!userId || !orgId) {
     return { error: "Not authenticated" };
+  }
+
+  const canCreate = await hasAvailableCount();
+
+  if (!canCreate) {
+    return {
+      error:
+        "You have reached your limit of free boards. Please upgrade to create more.",
+    };
   }
 
   const { title, image } = data;
@@ -45,6 +55,8 @@ const handler = async (data: InputType): Promise<ReturnType> => {
         imageUserName,
       },
     });
+
+    await incrementAvailableCount();
 
     await createAuditLog({
       entityTitle: board.title,
